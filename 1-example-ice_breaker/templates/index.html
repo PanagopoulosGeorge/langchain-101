@@ -1,0 +1,30 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ice Breaker App</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+
+<body>
+    <div class="container">
+        <h1>Ice Breaker App</h1>
+        <form id="iceBreakerForm">
+            <label for="name">Enter Name:</label>
+            <input type="text" id="name" name="name" required>
+            <button type="submit">Submit</button>
+        </form>
+        <div id="result" class="hidden">
+            <h2>Summary:</h2>
+            <p id="summary"></p>
+            <h2>Profile Picture:</h2>
+            <img id="profilePic" src="" alt="Profile Picture">
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+
+</html>
