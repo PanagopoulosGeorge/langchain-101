@@ -1,15 +1,71 @@
-# Automating RTEC Prompting
 
-An attempt for automating prompting process of LLMs for RTEC rule generation.
+###  Automating RTEC Prompting
 
-## Overview
+An attempt for automating the prompting process of LLMs for RTEC rule generation.
 
+#### Project Overview
 
 This project aims to automate the process of interacting with LLMs using structured prompts in the RTEC format. The system handles both training prompts and testing prompts for maritime situational awareness (MSA) scenarios.
 
-### 1\. Prompt Categories
+-   Maritime Situational Awareness (MSA)
 
-* **General Training Prompts**: RTEC-1 through RTEC-SDF2
-* Basic RTEC syntax and conventions
-* **Contect Specific Prompts**: Prompt MSA through Prompt MSA-BK
-* **Testing Prompts**: Prompt MSA-R1 Through Prompt MSA-R18
+#### Prompt Categories
+
+*  **General Training Prompts**: RTEC-1 through RTEC-SDF2
+
+	* Contains basic RTEC syntax and conventions.
+
+*  **Contect Specific Prompts**: Prompt MSA through Prompt MSA-BK
+	* Contains domain specific knowledge
+
+*  **Testing Prompts**: Prompt MSA-R1 Through Prompt MSA-R18
+	* These prompts will be used to assess the models learning process.
+
+### Goal of the learning process
+
+1.  **Input Processing**
+    
+    -   Accept natural language descriptions of composite activities
+    -   Process predefined events and fluents for each domain
+    -   Handle background knowledge predicates
+
+2.  **Rule Generation**
+    
+    -   Generate valid RTEC rules in Prolog syntax
+    -   Support two types of rule definitions:
+        -   Simple fluent definitions (using initiatedAt/terminatedAt)
+        -   Statically determined fluent definitions (using holdsFor)
+      
+3.  **Domain Support**
+
+	-   Handle 12 predefined events (e.g., change_in_speed_start, gap_start)
+	-   Process input fluents (e.g., proximity)
+	-   Use 15 background knowledge predicates (e.g., thresholds, vesselType)
+
+#### Technical Constraints
+
+1.  **Rule Format**
+    
+    -   Follow Prolog conventions
+    -   Variables start with uppercase
+    -   Predicates and constants start with lowercase
+    -   Rules end with full-stop
+    -   Head separated from body with ":-"
+
+#### MVP Deliverables
+
+1.  **Core System**
+    
+    -   Prompt processing module
+    -   Rule generation engine
+
+2.  **Domain Implementation**
+    
+    -   Support for MSA rules
+    -   Background knowledge integration
+
+3.  **Documentation**
+    
+    -   System architecture
+    -   Usage guidelines
+    -   Example implementations
