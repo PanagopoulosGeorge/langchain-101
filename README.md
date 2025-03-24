@@ -5,7 +5,9 @@ An attempt for automating the prompting process of LLMs for RTEC rule generation
 
 #### Project Overview
 
-This project aims to automate the process of interacting with LLMs using structured prompts in the RTEC format. The system handles both training prompts and testing prompts for maritime situational awareness (MSA) scenarios.
+This project aims to automate the process of interacting with LLMs using structured prompts in the RTEC format. 
+Given a document containing a series of structured prompts, that are categorized in the following section, the main task is to programmatically prompt this series of prompts to multiple LLMs for generating responses, extracting the answers and validate them using a prolog file acting as the ground truth. There is already a framework for comparing test results, so the process of validating is out of the scope of this project.
+The system handles both training prompts and testing prompts for maritime situational awareness (MSA) scenarios.
 
 -   Maritime Situational Awareness (MSA)
 
