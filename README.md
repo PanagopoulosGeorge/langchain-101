@@ -48,7 +48,16 @@ see config/prompt_styles.py for reference.
 pip  install  -r requirements.txt
 
 ```
-
+## How to execute
+1.   Copy the original document file containing the prompts within the COT directory. 
+2. within this directory execute: 
+```bash
+python -m src.prompt_processor.doc_parser <name_of_the_file>.docx
+```
+3. if a file name output.json is created within the same directory, containing the prompts serialized, you can then execute:
+```bash
+python start_prompting.py
+```
   
 
 3. Set up your environment variables:
@@ -90,18 +99,18 @@ responses, input_tokens, output_tokens = client.generate()
 # Print the responses
 
 for response in responses:
+	
+	print(f"\nQuery: {response['query']}")
 
-print(f"\nQuery: {response['query']}")
+	print(f"Response: {response['response']}")
 
-print(f"Response: {response['response']}")
+	print(f"Input tokens: {response['input_tokens']}")
 
-print(f"Input tokens: {response['input_tokens']}")
+	print(f"Output tokens: {response['output_tokens']}")
 
-print(f"Output tokens: {response['output_tokens']}")
+	print(f"\nTotal input tokens: {input_tokens}")
 
-print(f"\nTotal input tokens: {input_tokens}")
-
-print(f"Total output tokens: {output_tokens}")
+	print(f"Total output tokens: {output_tokens}")
 
 ```
 
@@ -139,8 +148,6 @@ Total output tokens: 53
 
 ## Configuration
 
-  
-
 The LangchainClient can be configured with the following parameters:
 
   
@@ -152,14 +159,3 @@ The LangchainClient can be configured with the following parameters:
 - 0: More focused and deterministic
 
 - 1: More creative and varied
-
-  ## How to execute
-1.   Copy the original document file containing the prompts within the COT directory. 
-2. within this directory execute: 
-```bash
-		python -m src.prompt_processor.doc_parser <name_of_the_file>.docx
-```
-3. if a file name output.json is created within the same directory, containing the prompts serialized, you can then execute:
-```bash
-		python start_prompting.py
-```
