@@ -1,7 +1,6 @@
 from pathlib import Path
 from typing import List, Dict, Optional
 import docx
-import re
 import sys
 from ..config.prompt_styles import STYLE_MAPPING
 from .prompt_types import Prompt, PromptType
@@ -67,7 +66,8 @@ class DocumentParser:
                 # Determine prompt type
                 prompt_type = self._determine_prompt_type(text)
                 if not prompt_type:
-                    prompt_type = PromptType.USER
+                    current_prompt = None
+                    continue
                 
                 current_prompt = Prompt(
                     title=text.replace(self.prompt_header, '').replace(self.prompt_header_period, '').strip(),

@@ -52,13 +52,16 @@ class LangchainClient:
     def generate(self) -> List[Dict[str, Any]]:
         """Generate responses using Langchain"""
         responses = []
+        total_input_tokens, total_output_tokens = 0, 0
         for prompt in self._prompts:
             prompt_template = PromptTemplate(template="{query}")
             chain = prompt_template | self.llm 
             response = chain.invoke({"query": prompt["query"]})
-            prompt_response_consolidation = {**prompt, "response": response.content}
+            prompt_response_consolidation = {**prompt, "response": response.content, "input_tokens": response.usage_metadata['input_tokens'],"output_tokens": response.usage_metadata['output_tokens']}
+            total_input_tokens += response.usage_metadata['input_tokens']
+            total_output_tokens += response.usage_metadata['output_tokens']
             responses.append(prompt_response_consolidation)
-        return responses
+        return responses, total_input_tokens, total_output_tokens
 
     @property
     def prompts(self) -> List[Dict]:
