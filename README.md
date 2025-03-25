@@ -50,19 +50,23 @@ pip  install  -r requirements.txt
 ```
 ## How to execute
 1.   Copy the original document file containing the prompts within the COT directory. 
-2. within this directory execute: 
+2. setup the environment variables: within COT directory, create an env file containing the following variables:
+
+    - GEMINI_API_KEY=<your-gemini-api-key>
+	- OPENAI_API_KEY=<your-openai-api-key>
+    - TAVILY_API_KEY=<your-tavily-api-key> 			# if you want to execute the example within misc	
+    - SCRAPIN_API_KEY=<your-scrapin-api-key> 		# if you want to execute the example  within misc
+    - LANGSMITH_TRACING=true                        # These three environment variables are required for prompt tracing
+    - LANGSMITH_API_KEY=<your-langsmith-api-key>
+	- LANGSMITH_ENDPOINT="https://api.smith.langchain.com"
+3. within this directory execute: 
 ```bash
 python -m src.prompt_processor.doc_parser <name_of_the_file>.docx
 ```
-3. if a file name output.json is created within the same directory, containing the prompts serialized, you can then execute:
+4. if a file name output.json is created within the same directory, containing the prompts serialized, you can then execute:
 ```bash
 python start_prompting.py
 ```
-  
-
-3. Set up your environment variables:
-
-- For Gemini: Set `GEMINI_API_KEY` in your environment or `.env` file
 
   
 

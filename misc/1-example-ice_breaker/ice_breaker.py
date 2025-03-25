@@ -9,6 +9,11 @@ from typing import Tuple
 from decouple import config
 from langchain_google_genai import ChatGoogleGenerativeAI
 GEMINI_API_KEY = config("GEMINI_API_KEY", default="")
+import os
+os.environ['LANGCHAIN_TRACING_V2'] = 'true'
+os.environ['LANGSMITH_ENDPOINT'] = config("LANGSMITH_ENDPOINT", default="")
+os.environ['LANGSMITH_API_KEY'] = config("LANGSMITH_API_KEY", default="")
+os.environ['LANGSMITH_PROJECT'] = 'llm-repro'
 def ice_break_with(name: str) -> Tuple:
     linkedin_username = linkedin_lookup_agent(name = name)
     # linkedin_username = "https://www.linkedin.com/in/george-panagopoulos-7282171b0/"
@@ -41,4 +46,5 @@ if __name__ == "__main__":
     print("")
     
     # search_name = str(input("Enter the name to search on LinkedIn: "))   
-    print(ice_break_with('George Panagopoulos'))
+    summary = ice_break_with('George Panagopoulos Netcompany')
+    print(summary)
