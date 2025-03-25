@@ -1,0 +1,247 @@
+[
+    {
+        "title": "RTEC-1",
+        "query": "You are an assistant in constructing rules in the language of the Run-Time Event Calculus (RTEC), given a composite activity description in natural language. The Event Calculus is a logic-based formalism for representing and reasoning about events and their effects. The Run-Time Event Calculus (RTEC) is a Prolog programming implementation of the Event Calculus, that has been optimised for composite activity recognition. Below, we summarise the language of RTEC.",
+        "prompt_type": "SYSTEM",
+        "sequence_id": 0,
+        "dependencies": null
+    },
+    {
+        "title": "RTEC-2",
+        "query": "Following the Prolog convention, variables start with an upper-case letter, while predicates and constants start with a lower-case letter. Each rule ends with a full-stop \u201c.\u201d, while the head of a rule is separated from its body with \u201c:-\u201d.\nA fluent is a property that may have different values at different points in time. The term F=V denotes that fluent F has value V.\u00a0 Boolean fluents are a special case in which the possible values are \u201ctrue\u201d and \u201cfalse\u201d.",
+        "prompt_type": "SYSTEM",
+        "sequence_id": 1,
+        "dependencies": null
+    },
+    {
+        "title": "RTEC-3",
+        "query": "Below are the predicates of RTEC.\nRTEC - Predicate 1: happensAt(E,T)\nMeaning: Event E occurs at time T\nRTEC - Predicate 2: holdsAt(F=V,T)\nMeaning: The value of fluent F is V at time T\nRTEC - Predicate 3: holdsFor(F=V,I)\nMeaning: I is the list of the maximal intervals during which F=V holds continuously\nRTEC - Predicate 4: initiatedAt(F=V,T)\nMeaning: At time T a period of time for which F=V is initiated\nRTEC - Predicate 5: terminatedAt(F=V,T)\nMeaning: At time T a period of time for which F=V is terminated\nRTEC - Predicate 6: union_all(L,I)\nMeaning: I is the list of maximal intervals produced by the union of the lists of maximal intervals of list L\nRTEC - Predicate 7: intersect_all(L,I)\nMeaning: I is the list of maximal intervals produced by the intersection of the lists of maximal intervals of list L\nRTEC - Predicate 8: relative_complement_all(I',L,I)\nMeaning: I is the list of maximal intervals produced by the relative complement of the list of maximal intervals I' with respect to every list of maximal intervals of list L",
+        "prompt_type": "SYSTEM",
+        "sequence_id": 2,
+        "dependencies": null
+    },
+    {
+        "title": "RTEC-4",
+        "query": "RTEC also includes two built-in events.\nBuilt-in event 1: start(F=V)\nMeaning: Event \u201cstart(F=V)\u201d takes place at each starting point of each maximal interval of fluent-value pair F=V\nBuilt-in event 2: end(F=V)\nMeaning: Event \u201cend(F=V)\u201d takes place at each ending point of each maximal interval of fluent-value pair F=V",
+        "prompt_type": "SYSTEM",
+        "sequence_id": 3,
+        "dependencies": null
+    },
+    {
+        "title": "RTEC-SF1",
+        "query": "There are two ways in which a composite activity may be defined in the language of RTEC. In the first case, a composite activity definition may be specified by means of rules with \u201cinitiatedAt(F=V, T)\u201d or \u201cterminatedAt(F=V, T)\u201d in their head. This is called a simple fluent definition.\nThe first body literal of an \u201cinitiatedAt(F=V,T)\u201d rule is a positive \u201chappensAt\u201d predicate; this predicate is followed by a possibly empty set of positive or negative \u201chappensAt\u201d and \u201choldsAt\u201d predicates. Negative predicates are prefixed with \u201cnot\u201d which expresses negation-by-failure. In some cases, the body of an \u201cinitiatedAt(F=V,T)\u201d rule may include predicates expressing background knowledge.\n\u201cterminatedAt(F=V,T)\u201d rules are specified in a similar way.\nBelow you may find two examples of composite activity definitions, from the maritime domain, expressed as simple fluents.\nExample 1: Given a composite maritime activity description, provide the rules in the language of RTEC.\nComposite Maritime Activity Description: \u201cwithinArea\u201d. This activity starts when a vessel enters an area of interest. The activity ends when the vessel leaves the area that it had entered, or when the vessel stops transmitting its position, since we can no longer assume that the vessel remains in the same area in the case of transmission gaps.\nAnswer:\nThe activity \u201cwithinArea\u201d is expressed as a Boolean simple fluent with two arguments, i.e., \u201cVessel\u201d and \u201cAreaType\u201d. This activity starts when a vessel enters an area of interest. We use an \"initiatedAt\" rule to express this initiation condition. The body literals of this rules are an event labelled \u201centersArea\u201d with two arguments, \u201cVessel\u201d and \u201cArea\u201d, and a background knowledge predicate named \u201careaType\u201d with two arguments, \u201cArea\u201d and \u201cAreaType\u201d. This rule in the language of RTEC is the following:\ninitiatedAt(withinArea(Vessel, AreaType)=true, T) :-\nhappensAt(entersArea(Vessel, Area), T),\nareaType(Area, AreaType).\nThe activity \u201cwithinArea\u201d ends when a vessel leaves the area that it had entered. We use a \u201cterminatedAt\u201d rule to describe this termination condition. This rule includes an event named \u201cleavesArea\u201d with two arguments, i.e. \u201cVessel\u201d and \u201cArea\u201d, and the background knowledge predicate \u201careaType\u201d. This rule in the language of RTEC language is:\nterminatedAt(withinArea(Vessel, AreaType)=true, T) :-\nhappensAt(leavesArea(Vessel, Area), T),\nareaType(Area, AreaType).\nIn addition to the aforementioned conditions, the activity \u201cwithinArea\u201d ends when the vessel stops transmitting its position, i.e. when a communication gap starts. We use a \u201cterminatedAt\u201d rule to express this termination condition. In this rule, the second argument of the \u201cwithinArea\u201d fluent is a \u2018free\u2019 Prolog variable, i.e. a variable starting with \u2018_\u2019. The body of this rule includes a single event named \u201cgap_start\u201d with one argument, i.e. \u201cVessel\u201d. This rule in the language of RTEC is:\nterminatedAt(withinArea(Vessel, _AreaType)=true, T) :-\nhappensAt(gap_start(Vessel), T).",
+        "prompt_type": "EXAMPLE",
+        "sequence_id": 4,
+        "dependencies": null
+    },
+    {
+        "title": "RTEC-SF2",
+        "query": "Example 2: Given a composite maritime activity description, provide the rules in the language of RTEC.\nComposite Maritime Activity Description: \u201cstopped\u201d. This activity starts when a vessel becomes idle near some port or far from all ports. The activity ends when the vessel stops being idle, i.e., when it starts to move. When there is a gap in signal transmissions, we can no longer assume that the vessel remains stopped.\nAnswer: The activity \u201cstopped\u201d is expressed as a simple fluent. This activity starts when a vessel becomes idle near some port. We use an \u201cinitiatedAt\u201d rule to describe this initiation condition. The output is the fluent \u201cstopped\u201d, which has one argument, i.e. \u201cVessel\u201d, and value \u201cnearPorts\u201d. The \u201cinitiatedAt\u201d rule includes an event named \u201cstop_start\u201d with one argument, i.e. \u201cVessel\u201d. We verify that the vessel is currently near some port by requiring that the fluent-value pair \u201cwithinArea(Vessel, nearPorts)=true\u201d must hold. This condition refers to the activity \u201cwithinArea\u201d, which was learned in a previous example. This rule in the language of RTEC is:\ninitiatedAt(stopped(Vessel)=nearPorts, T) :-\nhappensAt(stop_start(Vessel), T),\nholdsAt(withinArea(Vessel, nearPorts)=true, T).\nThe activity \u201cstopped\u201d may also start when a vessel becomes idle far from all ports. In this case, the \u201cstopped\u201d fluent has value \u201cfarFromPorts\u201d. We use an \u201cinitiatedAt\u201d rule to express this initiation condition. The body of this rule includes an event named \u201cstop_start\u201d with one argument, i.e. \u201cVessel\u201d. We verify that the vessel is currently far from all ports by requiring that the fluent-value pair \u201cwithinArea(Vessel, nearPorts)=true\u201d does not hold. This rule in the language of RTEC is:\ninitiatedAt(stopped(Vessel)=farFromPorts, T) :-\nhappensAt(stop_start(Vessel), T),\nnot holdsAt(withinArea(Vessel, nearPorts)=true, T).\nThe activity \u201cstopped\u201d ends when a vessel stops being idle, irrespective of the location of the vessel. We use a \u201cterminatedAt\u201d rule to express this termination condition. Moreover, we use a free Prolog variable to express the value of the \u201cstopped\u201d fluent, called \u201c_Status\u201d, i.e. we place no constraints on the value of the \u201cstopped\u201d fluent. The \u201cterminatedAt\u201d rule includes a single event named \u201cstop_end\u201d with one argument, i.e. \u201cVessel\u201d. This rule in the language of RTEC is:\nterminatedAt(stopped(Vessel)=_Status, T) :-\nhappensAt(stop_end(Vessel), T).\nThe activity \u201cstopped\u201d may also end when a communication gap starts. We use a \u201cterminatedAt\u201d rule to express this termination condition. This rule includes the built-in \u201cstart\u201d event of RTEC, which expresses the start times of the maximal intervals of a given fluent-value pair. In this case, the \u201cstart\u201d event is applied to the gap fluent, expressing the times at which a communication gap for the vessel in question starts. This rule in the language of RTEC is:\nterminatedAt(stopped(Vessel)=_Status, T) :-\nhappensAt(start(gap(Vessel)=_GapStatus), T).",
+        "prompt_type": "EXAMPLE",
+        "sequence_id": 5,
+        "dependencies": null
+    },
+    {
+        "title": "RTEC-SDF1",
+        "query": "The second way in which a composite activity may be defined in the language of RTEC concerns statically determined fluents. In this case, a composite activity definition may be specified by means of a rule with \u201choldsFor(F=V, I)\u201d in its head. The body of such a rule may include \u201choldsFor\u201d conditions for fluents other than F, as well as some of the interval manipulation constructs of RTEC, i.e. \u201cunion_all\u201d, \u201cintersect_all\u201d, and \u201crelative_complement_all\u201d. In some cases, a \u201choldsFor(F=V, I)\u201d rule may include predicates expressing background knowledge. A rule with \u201choldsFor(F=V, I)\u201d in the head is called a statically determined fluent definition. Below you may find two examples of composite maritime activities expressed as statically determined fluents.\nExample 1: Given a composite maritime activity description, provide the rules in the language of RTEC.\nComposite Maritime Activity Description: \u201cunderWay\u201d. This activity lasts as long as a vessel is not stopped.\nAnswer: The activity \u201cunderWay\u201d is expressed as a statically determined fluent. Rules with \u201choldsFor\u201d in the head specify the conditions in which a fluent holds. We use a \u201choldsFor\u201d rule to describe that the \u201cunderWay\u201d activity lasts as long as a vessel is not stopped. The output is \u0392oolean fluent named \u201cunderWay\u201d with one argument, i.e. \u201cVessel\u201d. We specify \u201cunderWay\u201d with the use of the fluent \u201cmovingSpeed\u201d. We express \u201cunderWay\u201d as the disjunction of the three values of \u201cmovingSpeed\u201d, i.e. \u201cbelow\u201d, \u201cnormal\u201d and \u201cabove\u201d. Disjunction in \u201choldsFor\u201d rules is expressed by means of \u201cunion_all\u201d. This rule is expressed in the language of RTEC as follows:\nholdsFor(underWay(Vessel)=true, I) :-\nholdsFor(movingSpeed(Vessel)=below, I1),\nholdsFor(movingSpeed(Vessel)=normal, I2),\nholdsFor(movingSpeed(Vessel)=above, I3),\nunion_all([I1,I2,I3], I).",
+        "prompt_type": "EXAMPLE",
+        "sequence_id": 6,
+        "dependencies": null
+    },
+    {
+        "title": "RTEC-SDF2",
+        "query": "Example 2: Given a composite maritime activity description, provide the rules in the language of RTEC.\nComposite Maritime Activity Description: \u201crendezVous\u201d: This activity lasts as long as two vessels are close to each other, their speed is low and they are far from the coastline. Furthermore, neither of the two vessels should be a tug boat or a pilot vessel. We are interested in vessel meetings whose duration exceeds the expected minimum time required for a suspicious action, like an illegal cargo transfer.\nAnswer: The activity \u201crendezVous\u201d is expressed as a statically determined fluent. We use a \u201choldsFor\u201d rule to describe that the \u201crendezVous\u201d activity lasts as long as two vessels, neither of which is a tug boat or a pilot vessel, are both sailing at a low speed or are stopped far from all ports, while neither of them is close to a port or a coastline. The output is a Boolean fluent named \u201crendezVous\u201d with two arguments, i.e. \u201cVessel1\u201d and \u201cVessel2\u201d. To express that the two vessels must be close to each other, we use a Boolean fluent named \u201cproximity\u201d with two arguments, i.e. \u201cVessel1\u201d and \u201cVessel2\u201d. To express that neither of the vessels is a tug boat or a pilot vessel, we use a background knowledge predicate named \u201coneIsTug\u201d with two arguments, i.e. \u201cVessel1\u201d and \u201cVessel2\u201d, and a background knowledge predicate named \u201coneIsPilot\u201d with two arguments, i.e. \u201cVessel1\u201d and \u201cVessel2\u201d, and require that these predicates do not hold using \u201cnot\u201d. To express that \u201cVessel1\u201d has a low speed or it is stopped far from all ports, we use the predicate \u201cunion_all\u201d. Similarly, we employ \u201cunion_all\u201d to express that \u201cVessel2\u201d has a low speed or it is stopped far from all ports. Next, we use the predicate \u201cintersect_all\u201d to express the conjunction of these two events, i.e., that both vessels need to have a low speed or be stopped far from all ports. Subsequently, we need to express that neither of the two vessels is near a port or a coastline at this time. To do this, we employ the predicate \u201crelative_complement_all\u201d, in order to exclude the situations where \u201cVessel1\u201d is near a port, \u201cVessel1\u201d is near a coastline, \u201cVessel2\u201d is near a port or \u201cVessel2\u201d is near a coastline. Finally, we need to express that the duration of the activity is greater than the minimum expected duration of a rendez-vous among vessels. To do this, we use the background knowledge predicate \u201cthresholds\u201d to retrieve this minimum duration from background knowledge and store it in the variable \u201cRendezvousTime\u201d. Then, we use the background knowledge predicate \u201cintDurGreater\u201d in order to filter the intervals that have been computed so far, maintaining only the ones whose duration exceeds \u201cRendezvousTime\u201d. This rule in RTEC language is:\nholdsFor(rendezVous(Vessel1, Vessel2)=true, I) :-\nholdsFor(proximity(Vessel1, Vessel2)=true, Ip),\nnot oneIsTug(Vessel1, Vessel2),\nnot oneIsPilot(Vessel1, Vessel2),\nholdsFor(lowSpeed(Vessel1)=true, Il1),\nholdsFor(lowSpeed(Vessel2)=true, Il2),\nholdsFor(stopped(Vessel1)=farFromPorts, Is1),\nholdsFor(stopped(Vessel2)=farFromPorts, Is2),\nunion_all([Il1, Is1], I1b),\nunion_all([Il2, Is2], I2b),\nintersect_all([I1b, I2b, Ip], If), If\\=[],\nholdsFor(withinArea(Vessel1, nearPorts)=true, Iw1),\nholdsFor(withinArea(Vessel2, nearPorts)=true, Iw2),\nholdsFor(withinArea(Vessel1, nearCoast)=true, Iw3),\nholdsFor(withinArea(Vessel2, nearCoast)=true, Iw4),\nrelative_complement_all(If,[Iw1, Iw2, Iw3, Iw4], Ii),\nthresholds(rendezvousTime, RendezvousTime),\nintDurGreater(Ii, RendezvousTime, I).",
+        "prompt_type": "EXAMPLE",
+        "sequence_id": 7,
+        "dependencies": null
+    },
+    {
+        "title": "MSA",
+        "query": "Now, we will start with the generation of the composite activity definitions for maritime situational awareness (MSA). First, we will present the events and input fluents. Second, we will present the predicates expressing the background knowledge. Third, we will provide\u00a0 the composite activity definitions in natural language and ask for their specification in the language of RTEC.",
+        "prompt_type": "SYSTEM",
+        "sequence_id": 8,
+        "dependencies": null
+    },
+    {
+        "title": "MSA-Events",
+        "query": "In addition to the built-in events of RTEC, you may use the following MSA events:\nMSA - Event 1: change_in_speed_start(Vessel)\nMeaning: \u201cVessel\u201d started changing its speed.\nMSA - Event 2: change_in_speed_end(Vessel)\nMeaning: \u201cVessel\u201d stopped changing its speed.\nMSA - Event 3: change_in_heading(Vessel)\nMeaning: \u201cVessel\u201d changed its heading.\nMSA - Event 4: stop_start(Vessel)\nMeaning: \u201cVessel\u201d started being idle.\nMSA - Event 5: stop_end(Vessel)\nMeaning: \u201cVessel\u201d stopped being idle.\nMSA - Event 6: slow_motion_start(Vessel)\nMeaning: \u201cVessel\u201d started moving at a low speed.\nMSA - Event 7: slow_motion_end(Vessel)\nMeaning: \u201cVessel\u201d stopped moving at a low speed.\nMSA - Event 8: gap_start(Vessel)\nMeaning: \u201cVessel\u201d stopped sending position signals.\nMSA - Event 9: gap_end(Vessel)\nMeaning: \u201cVessel\u201d resumed sending position signals.\nMSA - Event 10: entersArea(Vessel,AreaID)\nMeaning: \u201cVessel\u201d enters an area with id \u201cAreaID\u201d.\nMSA - Event 11: leavesArea(Vessel,AreaID)\nMeaning: \u201cVessel\u201d leaves an area with id \u201cAreaID\u201d.\nMSA - Event 12: velocity(Vessel,Speed,CourseOverGround,TrueHeading)\nMeaning: \u201cVessel\u201d is moving with velocity \u201cSpeed\u201d, while it is moving in the direction indicated by angle \u201cCourseOverGround\u201d, and its bow is pointing in the direction indicated by angle \u201cTrueHeading\u201d.",
+        "prompt_type": "SYSTEM",
+        "sequence_id": 9,
+        "dependencies": null
+    },
+    {
+        "title": "MSA-Fluents",
+        "query": "You may also use the following MSA input fluent:\nMSA - Input Fluent 1: proximity(Vessel1, Vessel2) = true\nMeaning: \u201cVessel1\u201d and \u201cVessel2\u201d are close to each other.",
+        "prompt_type": "SYSTEM",
+        "sequence_id": 10,
+        "dependencies": null
+    },
+    {
+        "title": "MSA-BK",
+        "query": "You may use a MSA background knowledge predicate named \u201cthresholds\u201d with two arguments. The first argument refers to the threshold type and the second one to the threshold value. Threshold values can be used to perform mathematical operations and comparisons.\nMSA Background Knowledge - Predicate 1: thresholds(hcNearCoastMax,HcNearCoastMax)\nMeaning: The maximum sailing speed that is safe for a vessel to have in a coastal area.\nMSA Background Knowledge - Predicate 2: thresholds(adriftAngThr,AdriftAngThr)\nMeaning: The maximum angle difference between the actual direction of a vessel and the direction of its bow for which we consider that the vessel is not drifting.\nMSA Background Knowledge - Predicate 3: thresholds(aOrMTime,AOrMTime)\nMeaning: The maximum temporal extent during which a vessel may be idle without being considered anchored or moored.\nMSA Background Knowledge - Predicate 4: thresholds(trawlspeedMin,TrawlspeedMin)\nMeaning: The minimum speed of a vessel engaged in a trawling activity.\nMSA Background Knowledge - Predicate 5: thresholds(trawlspeedMax,TrawlspeedMax)\nMeaning: The maximum speed of a vessel engaged in a trawling activity.\nMSA Background Knowledge - Predicate 6: thresholds(tuggingMin,TuggingMin)\nMeaning: The minimum speed of a vessel engaged in a tugging operation.\nMSA Background Knowledge - Predicate 7: thresholds(tuggingMax,TuggingMax)\nMeaning: The maximum speed of a vessel engaged in a tugging operation.\nMSA Background Knowledge - Predicate 8: thresholds(tuggingTime,TuggingTime)\nMeaning: The minimum duration of a tugging operation.\nMSA Background Knowledge - Predicate 9: thresholds(movingMin,MovingMin)\nMeaning: The minimum speed of a moving vessel.\nMSA Background Knowledge - Predicate 10: thresholds(movingMax,MovingMax)\nMeaning: The maximum speed of a moving vessel.\nMSA Background Knowledge - Predicate 11: thresholds(sarMinSpeed,SarMinSpeed)\nMeaning: The minimum speed of a vessel engaged in a search-and-rescue (SAR) operation.\nMSA Background Knowledge - Predicate 12: thresholds(trawlingTime,TrawlingTime)\nMeaning: The minimum duration of a trawling activity.\nMSA Background Knowledge - Predicate 13: thresholds(loiteringTime,LoiteringTime)\nMeaning: The minimum duration of a loitering activity.\nMSA Background Knowledge - Predicate 14: typeSpeed(Type,Min,Max,Avg)\nMeaning: The minimum, maximum, and average speed of each vessel type.\nMSA Background Knowledge - Predicate 15: vesselType(Vessel,Type)\nMeaning: The vessel type of each vessel.",
+        "prompt_type": "SYSTEM",
+        "sequence_id": 11,
+        "dependencies": null
+    },
+    {
+        "title": "MSA-R1",
+        "query": "Given a composite activity description, provide the rules in the language of RTEC. You may use the built-in events of RTEC, the MSA events, the MSA input fluents, and the MSA background knowledge predicates. You may also use any of the MSA output fluents that you have already learned.\nComposite Maritime Activity Description - \u201cgap\u201d: A communication gap starts when we stop receiving messages from a vessel. We would like to distinguish the cases where a communication gap starts (i) near some port and (ii) far from all ports. A communication gap ends when we resume receiving messages from a vessel.",
+        "prompt_type": "USER",
+        "sequence_id": 12,
+        "dependencies": null
+    },
+    {
+        "title": "MSA-R2",
+        "query": "Given a composite activity description, provide the rules in the language of RTEC. You may use the built-in events of RTEC, the MSA events, the MSA input fluents, and the MSA background knowledge predicates. You may also use any of the MSA output fluents that you have already learned.\nComposite Maritime Activity Description - \u201cHighSpeedNearCoast\u201d: This activity starts when a vessel is sailing within a coastal area and its speed surpasses the coastal speed limit. The activity ends when the speed of the vessel becomes less than the coastal speed limit or the vessel exits the coastal area.",
+        "prompt_type": "USER",
+        "sequence_id": 13,
+        "dependencies": null
+    },
+    {
+        "title": "MSA-R3",
+        "query": "Given a composite activity description, provide the rules in the language of RTEC. You may use the built-in events of RTEC, the MSA events, the MSA input fluents, and the MSA background knowledge predicates. You may also use any of the MSA output fluents that you have already learned.\nComposite Maritime Activity Description - \u201ctrawlSpeed\u201d: The activity starts when the vessel is sailing in a fishing area and its speed is within the expected bounds for a trawling activity. The activity ends when the speed of the vessels falls outside the expected bounds for a trawling activity. When there is a gap in signal transmissions, we can no longer assume that the vessel\u2019s speed remains within the aforementioned bounds.",
+        "prompt_type": "USER",
+        "sequence_id": 14,
+        "dependencies": null
+    },
+    {
+        "title": "MSA-R4",
+        "query": "Given a composite activity description, provide the rules in the language of RTEC. You may use the built-in events of RTEC, the MSA events, the MSA input fluents, and the MSA background knowledge predicates. You may also use any of the MSA output fluents that you have already learned.\nComposite Maritime Activity Description - \u201ctrawlingMovement\u201d: This activity expresses that the vessel is sailing in a manner that is typical for a trawling activity. The activity starts when the vessel changes its heading while sailing within a fishing area. The activity ends when the vessel leaves the fishing area.",
+        "prompt_type": "USER",
+        "sequence_id": 15,
+        "dependencies": null
+    },
+    {
+        "title": "MSA-R5",
+        "query": "Given a composite activity description, provide the rules in the language of RTEC. You may use the built-in events of RTEC, the MSA events, the MSA input fluents, and the MSA background knowledge predicates. You may also use any of the MSA output fluents that you have already learned.\nComposite Maritime Activity Description - \u201clowSpeed\u201d: The activity starts when the vessel starts moving at a low speed. The activity ends when the vessel stops moving at a low speed. When there is a gap in signal transmissions, we can no longer assume that the vessel continues moving at a low speed.",
+        "prompt_type": "USER",
+        "sequence_id": 16,
+        "dependencies": null
+    },
+    {
+        "title": "MSA-R6",
+        "query": "Given a composite activity description, provide the rules in the language of RTEC. You may use the built-in events of RTEC, the MSA events, the MSA input fluents, and the MSA background knowledge predicates. You may also use any of the MSA output fluents that you have already learned.\nComposite Maritime Activity Description - \u201ctuggingSpeed\u201d: The activity starts when the vessel is sailing at a speed that is within the expected bounds for a tugging operation. The activity ends when the vessel is no longer sailing at a speed that is within the expected bounds for a tugging operation. When there is a gap in signal transmissions, we can no longer assume that the vessel\u2019s speed remains within the aforementioned bounds.",
+        "prompt_type": "USER",
+        "sequence_id": 17,
+        "dependencies": null
+    },
+    {
+        "title": "MSA-R7",
+        "query": "Given a composite activity description, provide the rules in the language of RTEC. You may use the built-in events of RTEC, the MSA events, the MSA input fluents, and the MSA background knowledge predicates. You may also use any of the MSA output fluents that you have already learned.\nComposite Maritime Activity Description - \u201csarSpeed\u201d: The activity starts when the speed of the vessel exceeds the minimum expected speed of a vessel that is engaged in a search-and-rescue (SAR) operation. The activity ends when the speed of the vessel falls below the aforementioned minimum speed threshold. When there is a gap in signal transmissions, we can no longer assume that the vessel\u2019s speed remains above the aforementioned threshold.",
+        "prompt_type": "USER",
+        "sequence_id": 18,
+        "dependencies": null
+    },
+    {
+        "title": "MSA-R8",
+        "query": "Given a composite activity description, provide the rules in the language of RTEC. You may use the built-in events of RTEC, the MSA events, the MSA input fluents, and the MSA background knowledge predicates. You may also use any of the MSA output fluents that you have already learned.\nComposite Maritime Activity Description - \u201cchangingSpeed\u201d: The activity starts when the speed of the vessel starts changing. The activity ends when the speed of the vessel stops changing. When there is a gap in signal transmissions, we can no longer assume that the vessel\u2019s speed is currently changing.",
+        "prompt_type": "USER",
+        "sequence_id": 19,
+        "dependencies": null
+    },
+    {
+        "title": "MSA-R9",
+        "query": "Given a composite activity description, provide the rules in the language of RTEC. You may use the built-in events of RTEC, the MSA events, the MSA input fluents, and the MSA background knowledge predicates. You may also use any of the MSA output fluents that you have already learned.\nComposite Maritime Activity Description - \u201cmovingSpeed\u201d: The activity monitors the time periods during which a vessel of a certain type is moving at a speed that is \u201cbelow\u201d the minimum speed expected for a vessel of this type, \u201cnormal\u201d, i.e., within the expected bounds for the speed of a vessel of this type, and \u201cabove\u201d the maximum speed expected for a vessel of this type. The activity ends when the speed of the vessel falls below the minimum speed expected for a moving vessel. When there is a gap in signal transmissions, we can no longer assume that the vessel\u2019s speed remains the same.",
+        "prompt_type": "USER",
+        "sequence_id": 20,
+        "dependencies": null
+    },
+    {
+        "title": "MSA-R10",
+        "query": "Given a composite activity description, provide the rules in the language of RTEC. You may use the built-in events of RTEC, the MSA events, the MSA input fluents, and the MSA background knowledge predicates. You may also use any of the MSA output fluents that you have already learned.\nComposite Maritime Activity Description - \u201ctrawling\u201d: Trawling is a common fishing method that involves a boat - trawler - pulling a fishing net through the water behind it. Trawling lasts as long as the vessel is sailing in a fishing area, its speed is within the expected bounds for a trawling activity and it is sailing in a manner that is typical for a trawling activity. Trawling activities cannot be arbitrarily brief, i.e., the duration of trawling activities exceeds a minimum temporal threshold.",
+        "prompt_type": "USER",
+        "sequence_id": 21,
+        "dependencies": null
+    },
+    {
+        "title": "MSA-R11",
+        "query": "Given a composite activity description, provide the rules in the language of RTEC. You may use the built-in events of RTEC, the MSA events, the MSA input fluents, and the MSA background knowledge predicates. You may also use any of the MSA output fluents that you have already learned.\nComposite Maritime Activity Description - \u201canchoredOrMoored\u201d: The activity lasts as long as the vessel is idle in an anchorage area that is far from all ports, or is idle near some port.",
+        "prompt_type": "USER",
+        "sequence_id": 22,
+        "dependencies": null
+    },
+    {
+        "title": "MSA-R12",
+        "query": "Given a composite activity description, provide the rules in the language of RTEC. You may use the built-in events of RTEC, the MSA events, the MSA input fluents, and the MSA background knowledge predicates. You may also use any of the MSA output fluents that you have already learned.\nComposite Maritime Activity Description - \u201ctugging\u201d: The activity involves a vessel being pulled or towed by a tugboat. Tugging lasts as long as the two involved vessels, one of which must be a tugboat, are sailing close to each other and their speed falls within the expected bounds for a tugging operation. Tugging operations cannot be arbitrarily brief, i.e., the duration of a tugging operation exceeds a minimum temporal threshold.",
+        "prompt_type": "USER",
+        "sequence_id": 23,
+        "dependencies": null
+    },
+    {
+        "title": "MSA-R13",
+        "query": "Given a composite activity description, provide the rules in the language of RTEC. You may use the built-in events of RTEC, the MSA events, the MSA input fluents, and the MSA background knowledge predicates. You may also use any of the MSA output fluents that you have already learned.\nComposite Maritime Activity Description - \u201csarMovement\u201d: This activity expresses that the vessel is moving in a manner that is typical for a search-and-rescue (SAR) operation. The activity starts when the vessel changes its speed or its heading. When there is a gap in signal transmissions, we can no longer assume that the vessel keeps moving in a similar fashion.",
+        "prompt_type": "USER",
+        "sequence_id": 24,
+        "dependencies": null
+    },
+    {
+        "title": "MSA-R14",
+        "query": "Given a composite activity description, provide the rules in the language of RTEC. You may use the built-in events of RTEC, the MSA events, the MSA input fluents, and the MSA background knowledge predicates. You may also use any of the MSA output fluents that you have already learned.\nComposite Maritime Activity Description - \u201cpilotOps\u201d: This activity expresses that a highly experienced sailor in navigation in specific areas - a maritime pilot - approaches with a pilot vessel, boards and manoeuvres another vessel through dangerous or congested areas. The activity lasts as long as the two involved vessels, one of which being a pilot vessel, are sailing close to each other, each having a low speed or being idle far from all ports, and are not within a coastal area.",
+        "prompt_type": "USER",
+        "sequence_id": 25,
+        "dependencies": null
+    },
+    {
+        "title": "MSA-R15",
+        "query": "Given a composite activity description, provide the rules in the language of RTEC. You may use the built-in events of RTEC, the MSA events, the MSA input fluents, and the MSA background knowledge predicates. You may also use any of the MSA output fluents that you have already learned.\nComposite Maritime Activity Description - \u201cdrifting\u201d: This activity expresses that a vessel is drifting due to sea currents or harsh weather conditions. The activity starts when the angle difference between the actual direction of the vessel and the direction of its bow exceeds a maximum limit, expressing a significant divergence. The activity ends when this angle difference falls below the aforementioned threshold or when the vessel stops moving.",
+        "prompt_type": "USER",
+        "sequence_id": 26,
+        "dependencies": null
+    },
+    {
+        "title": "MSA-R16",
+        "query": "Given a composite activity description, provide the rules in the language of RTEC. You may use the built-in events of RTEC, the MSA events, the MSA input fluents, and the MSA background knowledge predicates. You may also use any of the MSA output fluents that you have already learned.\nComposite Maritime Activity Description - \u201cinSAR\u201d: This activity expresses that the vessel is performing a search-and-rescue (SAR) operation. The activity lasts as long as the vessel is sailing at a speed that is typical for a pilot vessel involved in a SAR operation and the vessel is moving in a manner that is typical for such an operation.",
+        "prompt_type": "USER",
+        "sequence_id": 27,
+        "dependencies": null
+    },
+    {
+        "title": "MSA-R18",
+        "query": "Given a composite activity description, provide the rules in the language of RTEC. You may use the built-in events of RTEC, the MSA events, the MSA input fluents, and the MSA background knowledge predicates. You may also use any of the MSA output fluents that you have already learned.\nComposite Maritime Activity Description - \u201cloitering\u201d: This activity expresses that the vessel is in a particular area for a long period without any evident purpose. The activity lasts as long as the vessel has low speed or is idle far from all ports, and it is not near a coast, it is not anchored, and it is not moored. The activity cannot be arbitrarily brief, i.e., we detect \u201cloitering\u201d when the temporal extent during which the vessel is loafing around exceeds a minimum threshold.\nHUMAN ACTIVITY RECOGNITION",
+        "prompt_type": "USER",
+        "sequence_id": 28,
+        "dependencies": null
+    },
+    {
+        "title": "HAR",
+        "query": "Now, we will start with the generation of the composite activity definitions for human activity recognition (HAR). First, we will present the events and input fluents. Second, we will present the predicates expressing the background knowledge. Third, we will provide\u00a0 the composite activity definitions in natural language and ask for their specification in the language of RTEC.",
+        "prompt_type": "USER",
+        "sequence_id": 29,
+        "dependencies": null
+    },
+    {
+        "title": "HAR-Events",
+        "query": "In addition to the built-in events of RTEC, you may use the following HAR events:\nHAR - Event 1: appear(Id)\nMeaning: The event \u201cappear(Id)\u201d takes place at the first time that entity \u201cId\u201d is tracked by the cameras. \u201cId\u201d may refer to a person or an inanimate object.\nHAR - Event 2: disappear(Id)\nMeaning: The event \u201cdisappear(Id)\u201d takes place at the last time that entity \u201cId\u201d is tracked by the cameras. \u201cId\u201d may refer to a person or an inanimate object.",
+        "prompt_type": "USER",
+        "sequence_id": 30,
+        "dependencies": null
+    },
+    {
+        "title": "HAR-Fluents",
+        "query": "You may also use the following HAR input fluents:\nHAR - Input Fluent 1: coord(Id,X,Y) = true\nMeaning: The coordinates of the tracked entity \u201cId\u201d are \u201cX\u201d and \u201cY\u201d. \u201cId\u201d may refer to a person or an inanimate object.\nHAR - Input Fluent 2: walking(P) = true\nMeaning: A person \u201cP\u201d is walking.\nHAR - Input Fluent 3: active(P) = true\nMeaning: Non-abrupt body movement of person \u201cP\u201d in the same position.\nHAR - Input Fluent 4: inactive(P) = true\nMeaning: A person \u201cP\u201d is standing still.\nHAR - Input Fluent 5: running(P) = true\nMeaning: A person \u201cP\u201d is running\nHAR - Input Fluent 6: abrupt(P) = true\nMeaning: A person \u201cP\u201d moves abruptly but his position in the global coordinate system does not change significantly.\nHAR - Input Fluent 7: person(P) = true\nMeaning: Tracked entity \u201cP\u201d is a person.\nHAR - Input Fluent 8: close(Id1, Id2, DistanceThreshold)=true\nHAR - Meaning: The distance between entities \u201cId1\u201d and \u201cId2\u201d does not exceed \u201cDistanceThreshold\u201d pixel positions.",
+        "prompt_type": "USER",
+        "sequence_id": 31,
+        "dependencies": null
+    },
+    {
+        "title": "HAR-BK",
+        "query": "You may use a HAR background knowledge predicate named \u201cthresholds\u201d with two arguments. The first argument refers to the threshold type and the second one to the threshold value. Threshold values may be used to perform mathematical operations and comparisons.\nHAR Background Knowledge - Predicate 1: thresholds(leavingObject, LeavingObjectThreshold)\nMeaning: \u201cLeavingObjectThreshold\u201d expresses the maximum distance between two people fighting.\nHAR Background Knowledge - Predicate 2: thresholds(moving, MovingThreshold)\nMeaning: \u201cMovingThreshold\u201d expresses the maximum distance between two people fighting.\nHAR Background Knowledge - Predicate 3: thresholds(fighting, FightingThreshold)\nMeaning: \u201cFightingThreshold\u201d expresses the maximum distance between two people fighting.",
+        "prompt_type": "USER",
+        "sequence_id": 32,
+        "dependencies": null
+    },
+    {
+        "title": "HAR-R1",
+        "query": "Given a composite activity description, provide the rules in the language of RTEC. You may use the built-in events of RTEC, the HAR events, the HAR input fluents, and the HAR background knowledge predicates. You may also use any of the HAR output fluents that you have already learned.\nComposite Activity Description - \u201cleaving_object\u201d: This activity concerns a person and an inanimate object. The activity starts when an object \u2018appears\u2019, i.e. the cameras start tracking the object, and at the same time a person is very close to the object. The activity ends when an object \u2018disappears\u2019, i.e. the cameras stop tracking the object.",
+        "prompt_type": "USER",
+        "sequence_id": 33,
+        "dependencies": null
+    },
+    {
+        "title": "HAR-R2",
+        "query": "Given a composite activity description, provide the rules in the language of RTEC. You may use the built-in events of RTEC, the HAR events, the HAR input fluents, and the HAR background knowledge predicates. You may also use any of the HAR output fluents that you have already learned.\nComposite Activity Description - \u201cmoving\u201d: This activity concerns two people. The activity lasts as long as two people are walking and they are relatively close to each other.",
+        "prompt_type": "USER",
+        "sequence_id": 34,
+        "dependencies": null
+    }
+]
