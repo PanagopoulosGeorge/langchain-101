@@ -1,73 +1,121 @@
+# Chain of Thought (COT) Module
 
-###  Automating RTEC Prompting
+A Python module for interacting with Large Language Models (LLMs) using LangChain. This module currently supports Google's Gemini and Ollama models, providing a simple interface for generating responses to prompts.
 
-An attempt for automating the prompting process of LLMs for RTEC rule generation.
+## Features
 
-#### Project Overview
+- Support for multiple LLM providers:
+  - Google Gemini
+  - Ollama
+- Token usage tracking
+- Simple prompt management
+- JSON-based response storage
 
-This project aims to automate the process of interacting with LLMs using structured prompts in the RTEC format. 
-Given a document containing a series of structured prompts, that are categorized in the following section, the main task is to programmatically prompt this series of prompts to multiple LLMs for generating responses, extracting the answers and validate them using a prolog file acting as the ground truth. There is already a framework for comparing test results, so the process of validating is out of the scope of this project.
-The system handles both training prompts and testing prompts for maritime situational awareness (MSA) scenarios.
+## Installation
 
--   Maritime Situational Awareness (MSA)
+1. Clone this repository
+2. Install the required dependencies:
+```bash
+pip install langchain-core langchain-openai langchain-ollama langchain-google-genai python-decouple
+```
 
-#### Prompt Categories
+3. Set up your environment variables:
+   - For Gemini: Set `GEMINI_API_KEY` in your environment or `.env` file
 
-*  **General Training Prompts**: RTEC-1 through RTEC-SDF2
+## Basic Example
 
-	* Contains basic RTEC syntax and conventions.
+Here's a simple example demonstrating how to use the LangchainClient:
 
-*  **Contect Specific Prompts**: Prompt MSA through Prompt MSA-BK
-	* Contains domain specific knowledge
+```python
+from llm_interface.langchain_client import LangchainClient
 
-*  **Testing Prompts**: Prompt MSA-R1 Through Prompt MSA-R18
-	* These prompts will be used to assess the models learning process.
+# Initialize the client with Gemini model
+client = LangchainClient(model_name="gemini-2.0-flash", temperature=0)
 
-### Goal of the learning process
+# Define your prompts
+prompts = [
+    {"query": "What is the capital of France?"},
+    {"query": "Explain quantum computing in simple terms."}
+]
 
-1.  **Input Processing**
-    
-    -   Accept natural language descriptions of composite activities
-    -   Process predefined events and fluents for each domain
-    -   Handle background knowledge predicates
+# Set the prompts
+client.prompts = prompts
 
-2.  **Rule Generation**
-    
-    -   Generate valid RTEC rules in Prolog syntax
-    -   Support two types of rule definitions:
-        -   Simple fluent definitions (using initiatedAt/terminatedAt)
-        -   Statically determined fluent definitions (using holdsFor)
-      
-3.  **Domain Support**
+# Generate responses
+responses, input_tokens, output_tokens = client.generate()
 
-	-   Handle 12 predefined events (e.g., change_in_speed_start, gap_start)
-	-   Process input fluents (e.g., proximity)
-	-   Use 15 background knowledge predicates (e.g., thresholds, vesselType)
+# Print the responses
+for response in responses:
+    print(f"\nQuery: {response['query']}")
+    print(f"Response: {response['response']}")
+    print(f"Input tokens: {response['input_tokens']}")
+    print(f"Output tokens: {response['output_tokens']}")
 
-#### Technical Constraints
+print(f"\nTotal input tokens: {input_tokens}")
+print(f"Total output tokens: {output_tokens}")
+```
 
-1.  **Rule Format**
-    
-    -   Follow Prolog conventions
-    -   Variables start with uppercase
-    -   Predicates and constants start with lowercase
-    -   Rules end with full-stop
-    -   Head separated from body with ":-"
+Expected output:
+```
+Query: What is the capital of France?
+Response: The capital of France is Paris.
+Input tokens: 7
+Output tokens: 8
 
-#### MVP Deliverables
+Query: Explain quantum computing in simple terms.
+Response: Quantum computing is a type of computing that uses quantum mechanics to process information. Unlike classical computers that use bits (0s and 1s), quantum computers use quantum bits or qubits, which can exist in multiple states at once. This allows quantum computers to solve certain complex problems much faster than traditional computers.
+Input tokens: 9
+Output tokens: 45
 
-1.  **Core System**
-    
-    -   Prompt processing module
-    -   Rule generation engine
+Total input tokens: 16
+Total output tokens: 53
+```
 
-2.  **Domain Implementation**
-    
-    -   Support for MSA rules
-    -   Background knowledge integration
+## Configuration
 
-3.  **Documentation**
-    
-    -   System architecture
-    -   Usage guidelines
-    -   Example implementations
+The LangchainClient can be configured with the following parameters:
+
+- `model_name`: The name of the LLM model to use (default: 'gemini-2.0-flash')
+- `temperature`: Controls the randomness of the output (default: 0)
+  - 0: More focused and deterministic
+  - 1: More creative and varied
+
+## Input Format
+
+Prompts should be provided as a list of dictionaries, where each dictionary must contain a 'query' key:
+
+```python
+prompts = [
+    {"query": "Your first question here"},
+    {"query": "Your second question here"}
+]
+```
+
+## Response Format
+
+The `generate()` method returns a tuple containing:
+1. A list of response dictionaries, each containing:
+   - Original query
+   - Generated response
+   - Input token count
+   - Output token count
+2. Total input tokens
+3. Total output tokens
+
+## Error Handling
+
+The module includes error handling for:
+- Invalid API keys
+- Unsupported models
+- Incorrect prompt format
+- Missing query keys in prompts
+
+## Limitations
+
+- Currently supports only Gemini and Ollama models
+- Requires appropriate API keys for each service
+- Input prompts must be in JSON format with a 'query' field
+
+## Contributing
+
+Feel free to submit issues, fork the repository, and create pull requests for any improvements.
