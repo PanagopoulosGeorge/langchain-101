@@ -7,10 +7,10 @@ from decouple import config
 src_path = Path(__file__).parent / 'src'
 sys.path.append(str(src_path))
 
-from llm_interface.langchain_client import LangchainClient
+from llm_interface.langchain_client import LLMClient
 
 def main():
-    client = LangchainClient(model_name="gemini-2.0-flash", temperature=0)
+    client = LLMClient(model_name="gemini-2.0-flash", temperature=0)
     os.environ['LANGCHAIN_TRACING_V2'] = 'true'
     os.environ['LANGSMITH_ENDPOINT'] = config("LANGSMITH_ENDPOINT", default="")
     os.environ['LANGSMITH_API_KEY'] = config("LANGSMITH_API_KEY", default="")

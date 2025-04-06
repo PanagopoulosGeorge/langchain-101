@@ -33,14 +33,14 @@ class DocumentParser:
             if key in header:
                 type = prompt_type            
         # Fallback: Check content for indicators
-        if header.startswith('system:'):
-            return PromptType.SYSTEM
-        elif header.startswith('user:'):
-            return PromptType.USER
-        elif header.startswith('assistant:'):
-            return PromptType.ASSISTANT
-        elif header.startswith('example:'):
-            return PromptType.EXAMPLE
+        # if header.startswith('system:'):
+        #     return PromptType.SYSTEM
+        # elif header.startswith('user:'):
+        #     return PromptType.USER
+        # elif header.startswith('assistant:'):
+        #     return PromptType.ASSISTANT
+        # elif header.startswith('example:'):
+        #     return PromptType.EXAMPLE
             
         return type
     

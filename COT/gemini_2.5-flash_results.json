@@ -1,0 +1,138 @@
+{
+    "MSA-R1": {
+        "title": "MSA-R1",
+        "query": "Given a composite activity description, provide the rules in the language of RTEC. You may use the built-in events of RTEC, the MSA events, the MSA input fluents, and the MSA background knowledge predicates. You may also use any of the MSA output fluents that you have already learned.\nComposite Maritime Activity Description - \u201cgap\u201d: A communication gap starts when we stop receiving messages from a vessel. We would like to distinguish the cases where a communication gap starts (i) near some port and (ii) far from all ports. A communication gap ends when we resume receiving messages from a vessel.",
+        "prompt_type": "USER",
+        "sequence_id": 12,
+        "dependencies": null,
+        "response": "```prolog\ninitiatedAt(gap(Vessel)=nearPorts, T) :-\n    happensAt(gap_start(Vessel), T),\n    holdsAt(withinArea(Vessel, nearPorts)=true, T).\n\ninitiatedAt(gap(Vessel)=farFromPorts, T) :-\n    happensAt(gap_start(Vessel), T),\n    not holdsAt(withinArea(Vessel, nearPorts)=true, T).\n\nterminatedAt(gap(Vessel)=_Status, T) :-\n    happensAt(gap_end(Vessel), T).\n```"
+    },
+    "MSA-R2": {
+        "title": "MSA-R2",
+        "query": "Given a composite activity description, provide the rules in the language of RTEC. You may use the built-in events of RTEC, the MSA events, the MSA input fluents, and the MSA background knowledge predicates. You may also use any of the MSA output fluents that you have already learned.\nComposite Maritime Activity Description - \u201cHighSpeedNearCoast\u201d: This activity starts when a vessel is sailing within a coastal area and its speed surpasses the coastal speed limit. The activity ends when the speed of the vessel becomes less than the coastal speed limit or the vessel exits the coastal area.",
+        "prompt_type": "USER",
+        "sequence_id": 13,
+        "dependencies": null,
+        "response": "```prolog\ninitiatedAt(highSpeedNearCoast(Vessel)=true, T) :-\n    happensAt(velocity(Vessel, Speed, _, _), T),\n    holdsAt(withinArea(Vessel, nearCoast)=true, T),\n    thresholds(hcNearCoastMax, HcNearCoastMax),\n    Speed > HcNearCoastMax.\n\nterminatedAt(highSpeedNearCoast(Vessel)=true, T) :-\n    happensAt(velocity(Vessel, Speed, _, _), T),\n    thresholds(hcNearCoastMax, HcNearCoastMax),\n    Speed =< HcNearCoastMax.\n\nterminatedAt(highSpeedNearCoast(Vessel)=true, T) :-\n    happensAt(leavesArea(Vessel, nearCoast), T).\n```"
+    },
+    "MSA-R3": {
+        "title": "MSA-R3",
+        "query": "Given a composite activity description, provide the rules in the language of RTEC. You may use the built-in events of RTEC, the MSA events, the MSA input fluents, and the MSA background knowledge predicates. You may also use any of the MSA output fluents that you have already learned.\nComposite Maritime Activity Description - \u201ctrawlSpeed\u201d: The activity starts when the vessel is sailing in a fishing area and its speed is within the expected bounds for a trawling activity. The activity ends when the speed of the vessels falls outside the expected bounds for a trawling activity. When there is a gap in signal transmissions, we can no longer assume that the vessel\u2019s speed remains within the aforementioned bounds.",
+        "prompt_type": "USER",
+        "sequence_id": 14,
+        "dependencies": null,
+        "response": "```prolog\ninitiatedAt(trawlSpeed(Vessel)=true, T) :-\n    happensAt(velocity(Vessel, Speed, _, _), T),\n    holdsAt(withinArea(Vessel, fishingArea)=true, T),\n    thresholds(trawlspeedMin, TrawlspeedMin),\n    thresholds(trawlspeedMax, TrawlspeedMax),\n    Speed >= TrawlspeedMin,\n    Speed =< TrawlspeedMax.\n\nterminatedAt(trawlSpeed(Vessel)=true, T) :-\n    happensAt(velocity(Vessel, Speed, _, _), T),\n    thresholds(trawlspeedMin, TrawlspeedMin),\n    thresholds(trawlspeedMax, TrawlspeedMax),\n    (Speed < TrawlspeedMin ; Speed > TrawlspeedMax).\n\nterminatedAt(trawlSpeed(Vessel)=true, T) :-\n    happensAt(gap_start(Vessel), T).\n```"
+    },
+    "MSA-R4": {
+        "title": "MSA-R4",
+        "query": "Given a composite activity description, provide the rules in the language of RTEC. You may use the built-in events of RTEC, the MSA events, the MSA input fluents, and the MSA background knowledge predicates. You may also use any of the MSA output fluents that you have already learned.\nComposite Maritime Activity Description - \u201ctrawlingMovement\u201d: This activity expresses that the vessel is sailing in a manner that is typical for a trawling activity. The activity starts when the vessel changes its heading while sailing within a fishing area. The activity ends when the vessel leaves the fishing area.",
+        "prompt_type": "USER",
+        "sequence_id": 15,
+        "dependencies": null,
+        "response": "```prolog\ninitiatedAt(trawlingMovement(Vessel)=true, T) :-\n    happensAt(change_in_heading(Vessel), T),\n    holdsAt(withinArea(Vessel, fishingArea)=true, T).\n\nterminatedAt(trawlingMovement(Vessel)=true, T) :-\n    happensAt(leavesArea(Vessel, fishingArea), T).\n```"
+    },
+    "MSA-R5": {
+        "title": "MSA-R5",
+        "query": "Given a composite activity description, provide the rules in the language of RTEC. You may use the built-in events of RTEC, the MSA events, the MSA input fluents, and the MSA background knowledge predicates. You may also use any of the MSA output fluents that you have already learned.\nComposite Maritime Activity Description - \u201clowSpeed\u201d: The activity starts when the vessel starts moving at a low speed. The activity ends when the vessel stops moving at a low speed. When there is a gap in signal transmissions, we can no longer assume that the vessel continues moving at a low speed.",
+        "prompt_type": "USER",
+        "sequence_id": 16,
+        "dependencies": null,
+        "response": "The activity \"lowSpeed\" is expressed as a simple fluent. This activity starts when the vessel starts moving at a low speed. We use an \"initiatedAt\" rule to describe this initiation condition. The output is the fluent \"lowSpeed\", which has one argument, i.e. \"Vessel\", and value \"true\". The \"initiatedAt\" rule includes an event named \"slow_motion_start\" with one argument, i.e. \"Vessel\". This rule in the language of RTEC is:\n\n```prolog\ninitiatedAt(lowSpeed(Vessel)=true, T) :-\n    happensAt(slow_motion_start(Vessel), T).\n```\n\nThe activity \"lowSpeed\" ends when the vessel stops moving at a low speed. We use a \"terminatedAt\" rule to express this termination condition. The \"terminatedAt\" rule includes a single event named \"slow_motion_end\" with one argument, i.e. \"Vessel\". This rule in the language of RTEC is:\n\n```prolog\nterminatedAt(lowSpeed(Vessel)=true, T) :-\n    happensAt(slow_motion_end(Vessel), T).\n```\n\nThe activity \"lowSpeed\" may also end when a communication gap starts. We use a \"terminatedAt\" rule to express this termination condition. The \"terminatedAt\" rule includes a single event named \"gap_start\" with one argument, i.e. \"Vessel\". This rule in the language of RTEC is:\n\n```prolog\nterminatedAt(lowSpeed(Vessel)=true, T) :-\n    happensAt(gap_start(Vessel), T).\n```"
+    },
+    "MSA-R6": {
+        "title": "MSA-R6",
+        "query": "Given a composite activity description, provide the rules in the language of RTEC. You may use the built-in events of RTEC, the MSA events, the MSA input fluents, and the MSA background knowledge predicates. You may also use any of the MSA output fluents that you have already learned.\nComposite Maritime Activity Description - \u201ctuggingSpeed\u201d: The activity starts when the vessel is sailing at a speed that is within the expected bounds for a tugging operation. The activity ends when the vessel is no longer sailing at a speed that is within the expected bounds for a tugging operation. When there is a gap in signal transmissions, we can no longer assume that the vessel\u2019s speed remains within the aforementioned bounds.",
+        "prompt_type": "USER",
+        "sequence_id": 17,
+        "dependencies": null,
+        "response": "```prolog\ninitiatedAt(tuggingSpeed(Vessel)=true, T) :-\n    happensAt(velocity(Vessel, Speed, _, _), T),\n    thresholds(tuggingMin, TuggingMin),\n    thresholds(tuggingMax, TuggingMax),\n    Speed >= TuggingMin,\n    Speed =< TuggingMax.\n\nterminatedAt(tuggingSpeed(Vessel)=true, T) :-\n    happensAt(velocity(Vessel, Speed, _, _), T),\n    thresholds(tuggingMin, TuggingMin),\n    thresholds(tuggingMax, TuggingMax),\n    (Speed < TuggingMin ; Speed > TuggingMax).\n\nterminatedAt(tuggingSpeed(Vessel)=true, T) :-\n    happensAt(gap_start(Vessel), T).\n```"
+    },
+    "MSA-R7": {
+        "title": "MSA-R7",
+        "query": "Given a composite activity description, provide the rules in the language of RTEC. You may use the built-in events of RTEC, the MSA events, the MSA input fluents, and the MSA background knowledge predicates. You may also use any of the MSA output fluents that you have already learned.\nComposite Maritime Activity Description - \u201csarSpeed\u201d: The activity starts when the speed of the vessel exceeds the minimum expected speed of a vessel that is engaged in a search-and-rescue (SAR) operation. The activity ends when the speed of the vessel falls below the aforementioned minimum speed threshold. When there is a gap in signal transmissions, we can no longer assume that the vessel\u2019s speed remains above the aforementioned threshold.",
+        "prompt_type": "USER",
+        "sequence_id": 18,
+        "dependencies": null,
+        "response": "```prolog\ninitiatedAt(sarSpeed(Vessel)=true, T) :-\n    happensAt(velocity(Vessel, Speed, _, _), T),\n    thresholds(sarMinSpeed, SarMinSpeed),\n    Speed > SarMinSpeed.\n\nterminatedAt(sarSpeed(Vessel)=true, T) :-\n    happensAt(velocity(Vessel, Speed, _, _), T),\n    thresholds(sarMinSpeed, SarMinSpeed),\n    Speed =< SarMinSpeed.\n\nterminatedAt(sarSpeed(Vessel)=true, T) :-\n    happensAt(gap_start(Vessel), T).\n```"
+    },
+    "MSA-R8": {
+        "title": "MSA-R8",
+        "query": "Given a composite activity description, provide the rules in the language of RTEC. You may use the built-in events of RTEC, the MSA events, the MSA input fluents, and the MSA background knowledge predicates. You may also use any of the MSA output fluents that you have already learned.\nComposite Maritime Activity Description - \u201cchangingSpeed\u201d: The activity starts when the speed of the vessel starts changing. The activity ends when the speed of the vessel stops changing. When there is a gap in signal transmissions, we can no longer assume that the vessel\u2019s speed is currently changing.",
+        "prompt_type": "USER",
+        "sequence_id": 19,
+        "dependencies": null,
+        "response": "```prolog\ninitiatedAt(changingSpeed(Vessel)=true, T) :-\n    happensAt(change_in_speed_start(Vessel), T).\n\nterminatedAt(changingSpeed(Vessel)=true, T) :-\n    happensAt(change_in_speed_end(Vessel), T).\n\nterminatedAt(changingSpeed(Vessel)=true, T) :-\n    happensAt(gap_start(Vessel), T).\n```"
+    },
+    "MSA-R9": {
+        "title": "MSA-R9",
+        "query": "Given a composite activity description, provide the rules in the language of RTEC. You may use the built-in events of RTEC, the MSA events, the MSA input fluents, and the MSA background knowledge predicates. You may also use any of the MSA output fluents that you have already learned.\nComposite Maritime Activity Description - \u201cmovingSpeed\u201d: The activity monitors the time periods during which a vessel of a certain type is moving at a speed that is \u201cbelow\u201d the minimum speed expected for a vessel of this type, \u201cnormal\u201d, i.e., within the expected bounds for the speed of a vessel of this type, and \u201cabove\u201d the maximum speed expected for a vessel of this type. The activity ends when the speed of the vessel falls below the minimum speed expected for a moving vessel. When there is a gap in signal transmissions, we can no longer assume that the vessel\u2019s speed remains the same.",
+        "prompt_type": "USER",
+        "sequence_id": 20,
+        "dependencies": null,
+        "response": "```prolog\nholdsFor(movingSpeed(Vessel)=below, I) :-\n    vesselType(Vessel, Type),\n    typeSpeed(Type, Min, Max, Avg),\n    holdsFor(velocity(Vessel, Speed, _, _)=true, Iv),\n    Speed < Min,\n    intvVal(Iv, Speed),\n    thresholds(movingMin, MovingMin),\n    Speed > MovingMin,\n    intDurGreater(Iv, 0, I).\n\nholdsFor(movingSpeed(Vessel)=normal, I) :-\n    vesselType(Vessel, Type),\n    typeSpeed(Type, Min, Max, Avg),\n    holdsFor(velocity(Vessel, Speed, _, _)=true, Iv),\n    Speed >= Min,\n    Speed =< Max,\n    intvVal(Iv, Speed),\n    intDurGreater(Iv, 0, I).\n\nholdsFor(movingSpeed(Vessel)=above, I) :-\n    vesselType(Vessel, Type),\n    typeSpeed(Type, Min, Max, Avg),\n    holdsFor(velocity(Vessel, Speed, _, _)=true, Iv),\n    Speed > Max,\n    intvVal(Iv, Speed),\n    intDurGreater(Iv, 0, I).\n\nterminatedAt(movingSpeed(Vessel)=_Status, T) :-\n    holdsAt(velocity(Vessel, Speed, _, _)=true, T),\n    thresholds(movingMin, MovingMin),\n    Speed < MovingMin.\n\nterminatedAt(movingSpeed(Vessel)=_Status, T) :-\n    happensAt(start(gap(Vessel)=_GapStatus), T).\n```"
+    },
+    "MSA-R10": {
+        "title": "MSA-R10",
+        "query": "Given a composite activity description, provide the rules in the language of RTEC. You may use the built-in events of RTEC, the MSA events, the MSA input fluents, and the MSA background knowledge predicates. You may also use any of the MSA output fluents that you have already learned.\nComposite Maritime Activity Description - \u201ctrawling\u201d: Trawling is a common fishing method that involves a boat - trawler - pulling a fishing net through the water behind it. Trawling lasts as long as the vessel is sailing in a fishing area, its speed is within the expected bounds for a trawling activity and it is sailing in a manner that is typical for a trawling activity. Trawling activities cannot be arbitrarily brief, i.e., the duration of trawling activities exceeds a minimum temporal threshold.",
+        "prompt_type": "USER",
+        "sequence_id": 21,
+        "dependencies": null,
+        "response": "```prolog\nholdsFor(trawling(Vessel)=true, I) :-\n    holdsFor(withinArea(Vessel, fishingArea)=true, Ifishing),\n    thresholds(trawlspeedMin, TrawlspeedMin),\n    thresholds(trawlspeedMax, TrawlspeedMax),\n    holdsFor(speedBetween(Vessel, TrawlspeedMin, TrawlspeedMax)=true, Ispeed),\n    holdsFor(trawlingManner(Vessel)=true, Imanner),\n    intersect_all([Ifishing, Ispeed, Imanner], Iintermediate),\n    thresholds(trawlingTime, TrawlingTime),\n    intDurGreater(Iintermediate, TrawlingTime, I).\n```"
+    },
+    "MSA-R11": {
+        "title": "MSA-R11",
+        "query": "Given a composite activity description, provide the rules in the language of RTEC. You may use the built-in events of RTEC, the MSA events, the MSA input fluents, and the MSA background knowledge predicates. You may also use any of the MSA output fluents that you have already learned.\nComposite Maritime Activity Description - \u201canchoredOrMoored\u201d: The activity lasts as long as the vessel is idle in an anchorage area that is far from all ports, or is idle near some port.",
+        "prompt_type": "USER",
+        "sequence_id": 22,
+        "dependencies": null,
+        "response": "```prolog\nholdsFor(anchoredOrMoored(Vessel)=true, I) :-\n    holdsFor(stopped(Vessel)=farFromPorts, I1),\n    holdsFor(stopped(Vessel)=nearPorts, I2),\n    union_all([I1, I2], I).\n```"
+    },
+    "MSA-R12": {
+        "title": "MSA-R12",
+        "query": "Given a composite activity description, provide the rules in the language of RTEC. You may use the built-in events of RTEC, the MSA events, the MSA input fluents, and the MSA background knowledge predicates. You may also use any of the MSA output fluents that you have already learned.\nComposite Maritime Activity Description - \u201ctugging\u201d: The activity involves a vessel being pulled or towed by a tugboat. Tugging lasts as long as the two involved vessels, one of which must be a tugboat, are sailing close to each other and their speed falls within the expected bounds for a tugging operation. Tugging operations cannot be arbitrarily brief, i.e., the duration of a tugging operation exceeds a minimum temporal threshold.",
+        "prompt_type": "USER",
+        "sequence_id": 23,
+        "dependencies": null,
+        "response": "```prolog\nholdsFor(tugging(Vessel1, Vessel2)=true, I) :-\n    holdsFor(proximity(Vessel1, Vessel2)=true, Ip),\n    oneIsTug(Vessel1, Vessel2),\n    thresholds(tuggingMin, TuggingMin),\n    thresholds(tuggingMax, TuggingMax),\n    holdsFor(speedWithinRange(Vessel1, TuggingMin, TuggingMax)=true, Ir1),\n    holdsFor(speedWithinRange(Vessel2, TuggingMin, TuggingMax)=true, Ir2),\n    intersect_all([Ip, Ir1, Ir2], Ii),\n    thresholds(tuggingTime, TuggingTime),\n    intDurGreater(Ii, TuggingTime, I).\n```"
+    },
+    "MSA-R13": {
+        "title": "MSA-R13",
+        "query": "Given a composite activity description, provide the rules in the language of RTEC. You may use the built-in events of RTEC, the MSA events, the MSA input fluents, and the MSA background knowledge predicates. You may also use any of the MSA output fluents that you have already learned.\nComposite Maritime Activity Description - \u201csarMovement\u201d: This activity expresses that the vessel is moving in a manner that is typical for a search-and-rescue (SAR) operation. The activity starts when the vessel changes its speed or its heading. When there is a gap in signal transmissions, we can no longer assume that the vessel keeps moving in a similar fashion.",
+        "prompt_type": "USER",
+        "sequence_id": 24,
+        "dependencies": null,
+        "response": "```prolog\ninitiatedAt(sarMovement(Vessel)=true, T) :-\n    happensAt(change_in_speed_start(Vessel), T).\n\ninitiatedAt(sarMovement(Vessel)=true, T) :-\n    happensAt(change_in_heading(Vessel), T).\n\nterminatedAt(sarMovement(Vessel)=true, T) :-\n    happensAt(gap_start(Vessel), T).\n```"
+    },
+    "MSA-R14": {
+        "title": "MSA-R14",
+        "query": "Given a composite activity description, provide the rules in the language of RTEC. You may use the built-in events of RTEC, the MSA events, the MSA input fluents, and the MSA background knowledge predicates. You may also use any of the MSA output fluents that you have already learned.\nComposite Maritime Activity Description - \u201cpilotOps\u201d: This activity expresses that a highly experienced sailor in navigation in specific areas - a maritime pilot - approaches with a pilot vessel, boards and manoeuvres another vessel through dangerous or congested areas. The activity lasts as long as the two involved vessels, one of which being a pilot vessel, are sailing close to each other, each having a low speed or being idle far from all ports, and are not within a coastal area.",
+        "prompt_type": "USER",
+        "sequence_id": 25,
+        "dependencies": null,
+        "response": "```prolog\nholdsFor(pilotOps(Vessel1, Vessel2)=true, I) :-\n    vesselType(Vessel1, pilotBoat),\n    holdsFor(proximity(Vessel1, Vessel2)=true, Ip),\n    holdsFor(lowSpeed(Vessel1)=true, Il1),\n    holdsFor(lowSpeed(Vessel2)=true, Il2),\n    holdsFor(stopped(Vessel1)=farFromPorts, Is1),\n    holdsFor(stopped(Vessel2)=farFromPorts, Is2),\n    union_all([Il1, Is1], I1b),\n    union_all([Il2, Is2], I2b),\n    intersect_all([I1b, I2b, Ip], If), If\\=[],\n    holdsFor(withinArea(Vessel1, nearCoast)=true, Iw3),\n    holdsFor(withinArea(Vessel2, nearCoast)=true, Iw4),\n    relative_complement_all(If,[Iw3, Iw4], I).\nholdsFor(pilotOps(Vessel1, Vessel2)=true, I) :-\n    vesselType(Vessel2, pilotBoat),\n    holdsFor(proximity(Vessel1, Vessel2)=true, Ip),\n    holdsFor(lowSpeed(Vessel1)=true, Il1),\n    holdsFor(lowSpeed(Vessel2)=true, Il2),\n    holdsFor(stopped(Vessel1)=farFromPorts, Is1),\n    holdsFor(stopped(Vessel2)=farFromPorts, Is2),\n    union_all([Il1, Is1], I1b),\n    union_all([Il2, Is2], I2b),\n    intersect_all([I1b, I2b, Ip], If), If\\=[],\n    holdsFor(withinArea(Vessel1, nearCoast)=true, Iw3),\n    holdsFor(withinArea(Vessel2, nearCoast)=true, Iw4),\n    relative_complement_all(If,[Iw3, Iw4], I).\n```"
+    },
+    "MSA-R15": {
+        "title": "MSA-R15",
+        "query": "Given a composite activity description, provide the rules in the language of RTEC. You may use the built-in events of RTEC, the MSA events, the MSA input fluents, and the MSA background knowledge predicates. You may also use any of the MSA output fluents that you have already learned.\nComposite Maritime Activity Description - \u201cdrifting\u201d: This activity expresses that a vessel is drifting due to sea currents or harsh weather conditions. The activity starts when the angle difference between the actual direction of the vessel and the direction of its bow exceeds a maximum limit, expressing a significant divergence. The activity ends when this angle difference falls below the aforementioned threshold or when the vessel stops moving.",
+        "prompt_type": "USER",
+        "sequence_id": 26,
+        "dependencies": null,
+        "response": "```prolog\ninitiatedAt(drifting(Vessel)=true, T) :-\n    happensAt(velocity(Vessel, Speed, CourseOverGround, TrueHeading), T),\n    thresholds(adriftAngThr, AdriftAngThr),\n    Speed > 0,\n    abs(CourseOverGround - TrueHeading) > AdriftAngThr.\n\nterminatedAt(drifting(Vessel)=true, T) :-\n    happensAt(velocity(Vessel, Speed, CourseOverGround, TrueHeading), T),\n    thresholds(adriftAngThr, AdriftAngThr),\n    abs(CourseOverGround - TrueHeading) < AdriftAngThr.\n\nterminatedAt(drifting(Vessel)=true, T) :-\n    happensAt(stop_start(Vessel), T).\n```"
+    },
+    "MSA-R16": {
+        "title": "MSA-R16",
+        "query": "Given a composite activity description, provide the rules in the language of RTEC. You may use the built-in events of RTEC, the MSA events, the MSA input fluents, and the MSA background knowledge predicates. You may also use any of the MSA output fluents that you have already learned.\nComposite Maritime Activity Description - \u201cinSAR\u201d: This activity expresses that the vessel is performing a search-and-rescue (SAR) operation. The activity lasts as long as the vessel is sailing at a speed that is typical for a pilot vessel involved in a SAR operation and the vessel is moving in a manner that is typical for such an operation.",
+        "prompt_type": "USER",
+        "sequence_id": 27,
+        "dependencies": null,
+        "response": "The activity \"inSAR\" is expressed as a statically determined fluent. We use a \"holdsFor\" rule to describe that the \"inSAR\" activity lasts as long as the vessel is sailing at a speed that is typical for a vessel involved in a SAR operation and the vessel is moving in a manner that is typical for such an operation. The output is a Boolean fluent named \"inSAR\" with one argument, i.e. \"Vessel\". To express that the vessel is sailing at a speed that is typical for a vessel involved in a SAR operation, we use the fluent \"sarSpeed\" with one argument, i.e. \"Vessel\", and value \"true\". To express that the vessel is moving in a manner that is typical for such an operation, we use the fluent \"sarMotion\" with one argument, i.e. \"Vessel\", and value \"true\". We use the predicate \"intersect_all\" to express the conjunction of these two events, i.e., that the vessel must be sailing at a speed that is typical for a vessel involved in a SAR operation and the vessel must be moving in a manner that is typical for such an operation. This rule in RTEC language is:\n\n```prolog\nholdsFor(inSAR(Vessel)=true, I) :-\n    holdsFor(sarSpeed(Vessel)=true, Is),\n    holdsFor(sarMotion(Vessel)=true, Im),\n    intersect_all([Is, Im], I).\n```"
+    },
+    "MSA-R18": {
+        "title": "MSA-R18",
+        "query": "Given a composite activity description, provide the rules in the language of RTEC. You may use the built-in events of RTEC, the MSA events, the MSA input fluents, and the MSA background knowledge predicates. You may also use any of the MSA output fluents that you have already learned.\nComposite Maritime Activity Description - \u201cloitering\u201d: This activity expresses that the vessel is in a particular area for a long period without any evident purpose. The activity lasts as long as the vessel has low speed or is idle far from all ports, and it is not near a coast, it is not anchored, and it is not moored. The activity cannot be arbitrarily brief, i.e., we detect \u201cloitering\u201d when the temporal extent during which the vessel is loafing around exceeds a minimum threshold.",
+        "prompt_type": "USER",
+        "sequence_id": 28,
+        "dependencies": null,
+        "response": "```prolog\nholdsFor(loitering(Vessel)=true, I) :-\n    holdsFor(lowSpeed(Vessel)=true, Il),\n    holdsFor(stopped(Vessel)=farFromPorts, Is),\n    union_all([Il, Is], I1),\n    holdsFor(withinArea(Vessel, nearCoast)=true, Iw),\n    holdsFor(anchored(Vessel)=true, Ia),\n    holdsFor(moored(Vessel)=true, Im),\n    relative_complement_all(I1, [Iw, Ia, Im], Ii),\n    thresholds(loiteringTime, LoiteringTime),\n    intDurGreater(Ii, LoiteringTime, I).\n```"
+    }
+}

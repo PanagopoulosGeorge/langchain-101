@@ -1,10 +1,10 @@
 """Configuration for document style mappings."""
-from ..prompt_processor.prompt_types import PromptType
+from ..prompt_parser.prompt_types import PromptType
 
 STYLE_MAPPING = {
     # Basic styles
     'RTEC'     : PromptType.SYSTEM,
-    'MSA'      : PromptType.SYSTEM,
+    'MSA'      : PromptType.DOMAIN,
     'MSA-R'    : PromptType.USER,
     'NOT USED' : PromptType.ASSISTANT,
     'RTEC-S'   : PromptType.EXAMPLE,

@@ -3,10 +3,11 @@ from typing import List, Optional, Dict, Any
 from enum import Enum
 
 class PromptType(Enum):
-    SYSTEM = "SYSTEM"
+    SYSTEM = "BACKGROUND-KNOWLEDGE"
     USER = "USER"
     ASSISTANT = "ASSISTANT"
     EXAMPLE = "EXAMPLE"
+    DOMAIN = "DOMAIN"
 
 @dataclass
 class Prompt:
